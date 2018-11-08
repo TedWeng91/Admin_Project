@@ -11,6 +11,20 @@ import './style/index.scss'
 Vue.use(ElementUI)
 Vue.config.productionTip = false
 
+// 判断是否登陆，登陆后执行跳转
+router.beforeEach((to, from, next) => {
+  let token = localStorage.getItem('mytoken')
+  if (token) {
+    next()
+  } else {
+    if (to.path === '/login') {
+      next()
+    } else {
+      next({path: '/login'})
+    }
+  }
+})
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
