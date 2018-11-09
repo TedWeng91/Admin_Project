@@ -23,5 +23,5 @@ export const checkUser = params => {
 
 // 获取用户列表
 export const getuserlist = params => {
-  return axios.get('userlist', params).then(res => res.data)
+  return axios.get('users', params).then(res => res.data)
 }

@@ -5,27 +5,23 @@
         <div class="logo"></div>
         <el-menu
           :collapse="isCollapse"
-          default-active="2"
+          :router="true"
           class="el-menu-admin"
           @open="handleOpen"
           @close="handleClose"
           background-color="#545c64"
           text-color="#fff"
           active-text-color="#ffd04b">
-          <el-submenu index="1">
+          <el-submenu index='1'>
             <template slot="title">
               <i class="el-icon-location"></i>
               <span>用户管理</span>
             </template>
-          <el-menu-item index="1-1">
-            <i class="el-icon-menu"></i>
-            <span slot="title">用户列表</span>
-          </el-menu-item>
+            <el-menu-item index="/user">
+              <i class="el-icon-menu"></i>
+              <span slot="title">用户列表</span>
+            </el-menu-item>
           </el-submenu>
-          <el-menu-item index="2">
-            <i class="el-icon-menu"></i>
-            <span slot="title">导航二</span>
-          </el-menu-item>
         </el-menu>
       </el-aside>
       <el-container>
@@ -55,7 +51,7 @@ export default {
     }
   },
   mounted () {
-    let params = {params: {query: '', pagenum: 1, pagesize: 5}}
+    let params = {params: {query: '', pagenum: 1, pagesize: 3}}
     getuserlist(params).then(res => {
       console.log(res)
     })
