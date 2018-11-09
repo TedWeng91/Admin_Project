@@ -5,8 +5,8 @@ import App from './App'
 import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-
 import './style/index.scss'
+import store from './store/store'
 
 Vue.use(ElementUI)
 Vue.config.productionTip = false
@@ -29,6 +29,7 @@ router.beforeEach((to, from, next) => {
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })
