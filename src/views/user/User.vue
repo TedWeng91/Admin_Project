@@ -53,7 +53,7 @@
         <template slot-scope="scope">
           <el-button size="mini" class="el-icon-edit" type="primary" plain @click="showeditdialog(scope.row)"></el-button>
           <el-button size="mini" class="el-icon-delete" type="danger" plain @click="showdeletedialog(scope.row)"></el-button>
-          <el-button size="mini" class="el-icon-check" type="warning" plain></el-button>
+          <el-button size="mini" class="el-icon-check" type="warning" plain @click="showgrantdialog(scope.row)"></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -107,10 +107,27 @@
         <el-button type="primary" @click="editusersubmit('editform')">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 分配用户角色对话框 -->
+    <el-dialog title="分配角色" :visible.sync="grantDialogFormVisible">
+      <el-form :model="grantform"  label-width="80px" ref="grantform">
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="grantform.username" autocomplete="off" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="角色列表">
+          <el-select v-model="grantform.rid" placeholder="请分配角色">
+            <el-option v-for="(role, index) in roleList" :key="index" :label="role.roleName" :value="role.id"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="grantDialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="grantusersubmit()">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
-import {getuserlist, changestate, adduser, getuserbyid, edituser, deleteuser} from '../../api/index.js'
+import {getuserlist, changestate, adduser, getuserbyid, edituser, deleteuser, getroleslist, grantuser} from '../../api/index.js'
 
 export default {
   data () {
@@ -134,6 +151,13 @@ export default {
         mobile: '',
         id: ''
       },
+      grantDialogFormVisible: false,
+      grantform: {
+        username: '',
+        id: '',
+        rid: ''
+      },
+      roleList: [],
       rules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' }
@@ -258,6 +282,42 @@ export default {
           message: '已取消删除'
         })
       })
+    },
+    showgrantdialog (row) {
+      this.grantDialogFormVisible = true
+      this.grantform.username = row.username
+      this.grantform.id = row.id
+      console.log(row)
+      getroleslist(this.grantform).then(res => {
+        // console.log(res)
+        if (res.meta.status === 200) {
+          this.roleList = res.data
+        }
+      })
+    },
+    grantusersubmit () {
+      console.log(this.grantform)
+      if (!this.grantform.rid) {
+        this.$message({
+          type: 'warning',
+          message: '请分配用户角色'
+        })
+      } else {
+        grantuser({id: this.grantform.id, rid: this.grantform.rid}).then(res => {
+          if (res.meta.status === 200) {
+            this.$message({
+              type: 'success',
+              message: res.meta.msg
+            })
+            this.grantDialogFormVisible = false
+          } else {
+            this.$message({
+              type: 'error',
+              message: res.meta.msg
+            })
+          }
+        })
+      }
     }
   }
 }
