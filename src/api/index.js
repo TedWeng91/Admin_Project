@@ -30,3 +30,8 @@ export const getuserlist = params => {
 export const changestate = params => {
   return axios.put(`users/${params.uId}/state/${params.type}`).then(res => res.data)
 }
+
+// 添加用户功能
+export const adduser = params => {
+  return axios.post('users', params).then(res => res.data)
+}
