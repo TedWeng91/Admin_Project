@@ -42,9 +42,10 @@
       <el-table-column label="用户状态">
         <template slot-scope="scope">
           <el-switch
-            v-model="value2"
+            v-model="scope.row.mg_state"
             active-color="#13ce66"
-            inactive-color="#ff4949">
+            inactive-color="#ff4949"
+            @change="changeuserstate(scope.row)">
           </el-switch>
         </template>
       </el-table-column>
@@ -61,8 +62,8 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="1"
-        :page-sizes="[1, 2, 3, 4]"
-        :page-size="1"
+        :page-sizes="[10, 20, 30, 40]"
+        :page-size="10"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total">
       </el-pagination>
@@ -70,17 +71,16 @@
   </div>
 </template>
 <script>
-import {getuserlist} from '../../api/index.js'
+import {getuserlist, changestate} from '../../api/index.js'
 
 export default {
   data () {
     return {
       userlist: [],
       query: '',
-      pagesize: '1',
+      pagesize: '10',
       pagenum: '1',
-      total: 0,
-      value2: ''
+      total: 0
     }
   },
   created () {
@@ -102,6 +102,20 @@ export default {
         console.log(res)
         this.userlist = res.data.users
         this.total = res.data.total
+      })
+    },
+    changeuserstate (row) {
+      console.log(row)
+      changestate({uId: row.id, type: row.mg_state}).then(res => {
+        // console.log(res)
+        if (res.meta.status === 200) {
+          this.$message({
+            message: res.meta.msg,
+            type: 'success'
+          })
+        } else {
+          this.$message.error(res.meta.msg)
+        }
       })
     }
   }

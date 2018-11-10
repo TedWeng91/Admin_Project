@@ -25,3 +25,8 @@ export const checkUser = params => {
 export const getuserlist = params => {
   return axios.get('users', params).then(res => res.data)
 }
+
+// 更改用户状态
+export const changestate = params => {
+  return axios.put(`users/${params.uId}/state/${params.type}`).then(res => res.data)
+}
