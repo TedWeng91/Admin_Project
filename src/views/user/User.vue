@@ -18,6 +18,7 @@
       </el-col>
     </el-row>
     <el-table
+      v-loading="loading"
       :data="userlist"
       border
       style="width: 100%" class="mar">
@@ -132,6 +133,7 @@ import {getuserlist, changestate, adduser, getuserbyid, edituser, deleteuser, ge
 export default {
   data () {
     return {
+      loading: true,
       userlist: [],
       query: '',
       pagesize: '5',
@@ -190,10 +192,12 @@ export default {
       this.initlist()
     },
     initlist () {
+      this.loading = true
       getuserlist({params: {query: this.query, pagesize: this.pagesize, pagenum: this.pagenum}}).then(res => {
         console.log(res)
         this.userlist = res.data.users
         this.total = res.data.total
+        this.loading = false
       })
     },
     changeuserstate (row) {
