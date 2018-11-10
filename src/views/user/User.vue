@@ -51,7 +51,7 @@
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button size="mini" class="el-icon-edit" type="primary" plain></el-button>
+          <el-button size="mini" class="el-icon-edit" type="primary" plain @click="showeditdialog(scope.row)"></el-button>
           <el-button size="mini" class="el-icon-delete" type="danger" plain></el-button>
           <el-button size="mini" class="el-icon-check" type="warning" plain></el-button>
         </template>
@@ -63,7 +63,7 @@
         @current-change="handleCurrentChange"
         :current-page="1"
         :page-sizes="[5, 10, 15, 20]"
-        :page-size="5"
+        :page-size="5 "
         layout="total, sizes, prev, pager, next, jumper"
         :total="total">
       </el-pagination>
@@ -89,10 +89,28 @@
         <el-button type="primary" @click="addusersubmit('addform')">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 编辑用户对话框 -->
+    <el-dialog title="编辑用户" :visible.sync="editDialogFormVisible">
+      <el-form :model="editform"  label-width="80px" ref="editform">
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="editform.username" autocomplete="off" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="邮  箱" prop="email">
+          <el-input v-model="editform.email" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="电  话" prop="mobile">
+          <el-input v-model="editform.mobile" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="editDialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="editusersubmit('editform')">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
-import {getuserlist, changestate, adduser} from '../../api/index.js'
+import {getuserlist, changestate, adduser, getuserbyid, edituser} from '../../api/index.js'
 
 export default {
   data () {
@@ -108,6 +126,13 @@ export default {
         password: '',
         email: '',
         mobile: ''
+      },
+      editDialogFormVisible: false,
+      editform: {
+        username: '',
+        email: '',
+        mobile: '',
+        id: ''
       },
       rules: {
         username: [
@@ -174,6 +199,39 @@ export default {
               })
               this.addDialogFormVisible = false
               this.initlist()
+            }
+          })
+        }
+      })
+    },
+    showeditdialog (row) {
+      this.editDialogFormVisible = true
+      console.log(row)
+      getuserbyid(row.id).then(res => {
+        if (res.meta.status === 200) {
+          this.editform.username = res.data.username
+          this.editform.email = res.data.email
+          this.editform.mobile = res.data.mobile
+          this.editform.id = res.data.id
+        }
+      })
+    },
+    editusersubmit (formName) {
+      this.$refs[formName].validate(valide => {
+        if (valide) {
+          edituser(this.editform).then(res => {
+            if (res.meta.status === 200) {
+              this.editDialogFormVisible = false
+              this.initlist()
+              this.$message({
+                type: 'success',
+                message: res.meta.msg
+              })
+            } else {
+              this.$message({
+                type: 'warning',
+                message: res.meta.msg
+              })
             }
           })
         }
