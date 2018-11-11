@@ -60,3 +60,8 @@ export const getroleslist = params => {
 export const grantuser = params => {
   return axios.put(`users/${params.id}/role`, {id: params.id, rid: params.rid}).then(res => res.data)
 }
+
+// 获取权限列表
+export const getrightlist = params => {
+  return axios.get(`rights/${params.type}`).then(res => res.data)
+}
