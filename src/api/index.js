@@ -56,7 +56,7 @@ export const getroleslist = params => {
   return axios.get('roles').then(res => res.data)
 }
 
-// 分配角色
+// 分配用户角色
 export const grantuser = params => {
   return axios.put(`users/${params.id}/role`, {id: params.id, rid: params.rid}).then(res => res.data)
 }
@@ -66,7 +66,12 @@ export const getrightlist = params => {
   return axios.get(`rights/${params.type}`).then(res => res.data)
 }
 
-// 删除角色制定权限
+// 删除角色指定权限
 export const deleteright = params => {
   return axios.delete(`roles/${params.roleId}/rights/${params.rightId}`).then(res => res.data)
+}
+
+// 分配角色权限
+export const grantright = params => {
+  return axios.post(`roles/${params.roleId}/rights`, {rids: params.rids}).then(res => res.data)
 }
