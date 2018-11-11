@@ -65,3 +65,8 @@ export const grantuser = params => {
 export const getrightlist = params => {
   return axios.get(`rights/${params.type}`).then(res => res.data)
 }
+
+// 删除角色制定权限
+export const deleteright = params => {
+  return axios.delete(`roles/${params.roleId}/rights/${params.rightId}`).then(res => res.data)
+}

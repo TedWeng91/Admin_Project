@@ -22,17 +22,17 @@
       <template slot-scope="scope">
         <el-row v-for="(firstchildren, index) in scope.row.children" :key="index">
           <el-col :span="3">
-            <el-tag closable class=".el-tag">{{firstchildren.authName}}</el-tag>
+            <el-tag closable class=".el-tag" @close="deleteroleright(scope.row, firstchildren.id)">{{firstchildren.authName}}</el-tag>
             <i class="el-icon-arrow-right" v-if="firstchildren.children.length !== 0"></i>
           </el-col>
           <el-col :span="21">
             <el-row v-for="(secondchildren, index) in firstchildren.children" :key="index">
               <el-col :span="4">
-                <el-tag type='success' closable class=".el-tag">{{secondchildren.authName}}</el-tag>
+                <el-tag type='success' closable class=".el-tag" @close="deleteroleright(scope.row, secondchildren.id)">{{secondchildren.authName}}</el-tag>
                 <i class="el-icon-arrow-right" v-if="secondchildren.children.length !== 0"></i>
               </el-col>
               <el-col :span="20">
-                <el-tag type='warning' closable class=".el-tag" v-for="(thirdchildren, index) in secondchildren.children" :key="index">{{thirdchildren.authName}}</el-tag>
+                <el-tag type='warning' closable class=".el-tag" @close="deleteroleright(scope.row, thirdchildren.id)" v-for="(thirdchildren, index) in secondchildren.children" :key="index">{{thirdchildren.authName}}</el-tag>
               </el-col>
             </el-row>
           </el-col>
@@ -67,7 +67,7 @@
   </div>
 </template>
 <script>
-import {getroleslist} from '../../api/index.js'
+import {getroleslist, deleteright} from '../../api/index.js'
 export default {
   data () {
     return {
@@ -81,6 +81,26 @@ export default {
         this.rolelist = res.data
       }
     })
+  },
+  methods: {
+    deleteroleright (row, rightid) {
+      // console.log(row)
+      deleteright({roleId: row.id, rightId: rightid}).then(res => {
+        if (res.meta.status === 200) {
+          row.children = res.data
+          // console.log(res)
+          this.$message({
+            type: 'success',
+            message: res.meta.msg
+          })
+        } else {
+          this.$message({
+            type: 'error',
+            message: res.meta.msg
+          })
+        }
+      })
+    }
   }
 }
 </script>
