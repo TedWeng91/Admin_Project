@@ -100,3 +100,8 @@ export const getmeaus = () => {
 export const getcategories = params => {
   return axios.get('categories', {params: params}).then(res => res.data)
 }
+
+// 添加商品分类
+export const addcategories = params => {
+  return axios.post('categories', params).then(res => res.data)
+}
