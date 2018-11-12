@@ -43,7 +43,8 @@
             :options="options"
             :props="props"
             v-model="selectedOptions"
-            @change="handleChange">
+            @change="handleChange"
+            change-on-select>
           </el-cascader>
         </el-form-item>
       </el-form>
