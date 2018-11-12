@@ -11,7 +11,7 @@
     </el-row>
     <el-row>
       <el-col :span="24">
-        <el-button type="success" plain>添加角色</el-button>
+        <el-button type="success" plain @click="addDialogFormVisible=true">添加角色</el-button>
       </el-col>
     </el-row>
     <el-table
@@ -58,8 +58,8 @@
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button size="mini" class="el-icon-edit" type="primary" plain></el-button>
-          <el-button size="mini" class="el-icon-delete" type="danger" plain></el-button>
+          <el-button size="mini" class="el-icon-edit" type="primary" plain @click="showeditdialog(scope.row)"></el-button>
+          <el-button size="mini" class="el-icon-delete" type="danger" plain @click="deleterole(scope.row)"></el-button>
           <el-button size="mini" class="el-icon-check" type="warning" plain @click="showaddrightDialog(scope.row)"></el-button>
         </template>
       </el-table-column>
@@ -80,10 +80,40 @@
         <el-button type="primary" @click="grantrightsubmit">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 添加角色对话框 -->
+    <el-dialog title="添加角色" :visible.sync="addDialogFormVisible">
+      <el-form :model="addform"  label-width="80px" :rules="rules" ref="addform">
+        <el-form-item label="角色名称" prop="roleName">
+          <el-input v-model="addform.roleName" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="描  述" prop="roleDesc">
+          <el-input v-model="addform.roleDesc" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="addDialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addrolesubmit('addform')">确 定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 编辑角色对话框 -->
+    <el-dialog title="编辑用户" :visible.sync="editDialogFormVisible">
+      <el-form :model="editform"  label-width="80px" ref="editform">
+        <el-form-item label="角色名称" prop="roleName">
+          <el-input v-model="editform.roleName" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="描  述" prop="roleDesc">
+          <el-input v-model="editform.roleDesc" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="editDialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="editusersubmit('editform')">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
-import {getroleslist, deleteright, getrightlist, grantright} from '../../api/index.js'
+import {getroleslist, deleteright, getrightlist, grantright, addrole, editrole, deleterole} from '../../api/index.js'
 export default {
   data () {
     return {
@@ -95,7 +125,23 @@ export default {
         label: 'authName'
       },
       currights: [],
-      curroleID: ''
+      curroleID: '',
+      addDialogFormVisible: false,
+      addform: {
+        roleName: '',
+        roleDesc: ''
+      },
+      editDialogFormVisible: false,
+      editform: {
+        roleName: '',
+        roleDesc: '',
+        id: ''
+      },
+      rules: {
+        roleName: [
+          { required: true, message: '请输入角色名', trigger: 'blur' }
+        ]
+      }
     }
   },
   created () {
@@ -154,6 +200,70 @@ export default {
             }
           })
         }
+      })
+    },
+    showeditdialog (row) {
+      console.log(row)
+      this.editDialogFormVisible = true
+      this.editform = row
+    },
+    editusersubmit (formName) {
+      this.$refs[formName].validate(valide => {
+        if (valide) {
+          editrole(this.editform).then(res => {
+            if (res.meta.status === 200) {
+              this.$message({
+                type: 'success',
+                message: res.meta.msg
+              })
+              this.editDialogFormVisible = false
+              this.initlist()
+            } else {
+              this.$message({
+                type: 'error',
+                message: res.meta.msg
+              })
+            }
+          })
+        }
+      })
+    },
+    addrolesubmit (formName) {
+      this.$refs[formName].validate(valide => {
+        if (valide) {
+          addrole(this.addform).then(res => {
+            console.log(res)
+            if (res.meta.status === 201) {
+              this.$message({
+                type: 'success',
+                message: res.meta.msg
+              })
+              this.addDialogFormVisible = false
+              this.initlist()
+            }
+          })
+        }
+      })
+    },
+    deleterole (row) {
+      console.log(row)
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleterole(row.id).then(res => {
+          this.initlist()
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
       })
     },
     grantrightsubmit () {

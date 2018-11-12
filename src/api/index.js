@@ -41,7 +41,7 @@ export const getuserbyid = params => {
   return axios.get(`users/${params}`).then(res => res.data)
 }
 
-// 更改用户状态
+// 更改用户信息
 export const edituser = params => {
   return axios.put(`users/${params.id}`, params).then(res => res.data)
 }
@@ -64,6 +64,21 @@ export const grantuser = params => {
 // 获取权限列表
 export const getrightlist = params => {
   return axios.get(`rights/${params.type}`).then(res => res.data)
+}
+
+// 添加角色
+export const addrole = params => {
+  return axios.post('roles', params).then(res => res.data)
+}
+
+// 更改角色信息
+export const editrole = params => {
+  return axios.put(`roles/${params.id}`, params).then(res => res.data)
+}
+
+// 删除角色
+export const deleterole = params => {
+  return axios.delete(`roles/${params}`).then(res => res.data)
 }
 
 // 删除角色指定权限
