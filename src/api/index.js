@@ -95,3 +95,8 @@ export const grantright = params => {
 export const getmeaus = () => {
   return axios.get('menus').then(res => res.data)
 }
+
+// 获取商品列表
+export const getcategories = params => {
+  return axios.get('categories', {params: params}).then(res => res.data)
+}
