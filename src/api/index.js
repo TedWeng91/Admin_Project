@@ -75,3 +75,8 @@ export const deleteright = params => {
 export const grantright = params => {
   return axios.post(`roles/${params.roleId}/rights`, {rids: params.rids}).then(res => res.data)
 }
+
+// 获取左侧菜单
+export const getmeaus = () => {
+  return axios.get('menus').then(res => res.data)
+}

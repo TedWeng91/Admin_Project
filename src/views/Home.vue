@@ -13,28 +13,14 @@
           background-color="#545c64"
           text-color="#fff"
           active-text-color="#ffd04b">
-          <el-submenu index='1'>
+          <el-submenu :index='itemone.path' v-for="(itemone, index) in meaulist" :key="index">
             <template slot="title">
               <i class="el-icon-location"></i>
-              <span>用户管理</span>
+              <span>{{itemone.authName}}</span>
             </template>
-            <el-menu-item index="/user">
+            <el-menu-item :index="itemtwo.path" v-for="(itemtwo, index) in itemone.children" :key="index">
               <i class="el-icon-menu"></i>
-              <span slot="title">用户列表</span>
-            </el-menu-item>
-          </el-submenu>
-          <el-submenu index='2'>
-            <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>权限管理</span>
-            </template>
-            <el-menu-item index="/roles">
-              <i class="el-icon-menu"></i>
-              <span slot="title">角色列表</span>
-            </el-menu-item>
-            <el-menu-item index="/rights">
-              <i class="el-icon-menu"></i>
-              <span slot="title">权限列表</span>
+              <span slot="title">{{itemtwo.authName}}</span>
             </el-menu-item>
           </el-submenu>
         </el-menu>
@@ -58,12 +44,19 @@
   </div>
 </template>
 <script>
-import {getuserlist} from '../api/index.js'
+import {getuserlist, getmeaus} from '../api/index.js'
 export default {
   data () {
     return {
-      isCollapse: false
+      isCollapse: false,
+      meaulist: []
     }
+  },
+  created () {
+    getmeaus().then(res => {
+      console.log(res)
+      this.meaulist = res.data
+    })
   },
   mounted () {
     let params = {params: {query: '', pagenum: 1, pagesize: 3}}
@@ -110,7 +103,7 @@ export default {
   }
   .logo {
     height:60px;
-    background: url(../assets/logo.png);
+    // background: url(../assets/logo.png);
     background-size: cover;
     background-color: white;
   }
