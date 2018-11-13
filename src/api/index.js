@@ -105,3 +105,8 @@ export const getcategories = params => {
 export const addcategories = params => {
   return axios.post('categories', params).then(res => res.data)
 }
+
+// 获取商品列表
+export const getgoods = params => {
+  return axios.get('goods', {params: params}).then(res => res.data)
+}
