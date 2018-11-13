@@ -14,7 +14,7 @@
         <el-input placeholder="请输入内容" class="search-input" v-model="query" @keydown.native.enter="initlist">
           <el-button slot="append" icon="el-icon-search" @click="initlist"></el-button>
         </el-input>
-        <el-button type="success" plain>添加商品</el-button>
+        <el-button type="success" plain @click="toadd">添加商品</el-button>
       </el-col>
     </el-row>
     <el-table
@@ -108,6 +108,9 @@ export default {
           this.total = res.data.total
         }
       })
+    },
+    toadd () {
+      this.$router.push({name: 'Addgoods'})
     }
   }
 }
